@@ -1,0 +1,12 @@
+__pycache__
+test.py
+trash/*
+*.cdf
+*.nc
+*.png
+*.csv
+*.log
+*.xlsx
+*.yaml
+*.txt
+*.hpl
