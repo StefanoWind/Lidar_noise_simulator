@@ -36,6 +36,7 @@ c=299792458#[m/s] speed of light
 Nyquist=39.14#[m/s] Nyquist velocity
 slope_lin=-np.log(10)/10#[m/s/dB] slope of linear part fo noise curve
 snr_flat=-30#[dB] lower limit of SNR
+f2=5.5/(2*Nyquist)
 
 #stats
 max_unc=2#[m/s] max statistican uncertainty on noise
@@ -140,6 +141,9 @@ Data['snr_lin']=xr.DataArray(data=snr_lin,coords={'ppr':ppr,'dr':dr})
 Data['noise_lin']=xr.DataArray(data=noise_lin,coords={'ppr':ppr,'dr':dr})
 Data['noise_mod']=xr.DataArray(data=noise_mod,coords={'snr_plot':snr_plot,'ppr':ppr,'dr':dr})
 
+Data['delta']=10**(Data.snr/10)
+Data['noise_th']=(4*np.pi**0.5*f2**3/(Data.ppr*Data.dr/(c/(2*fs))*Data.delta**2)*(1+0.16*Data.delta/f2)**2)**0.5*(Nyquist*2)
+
 #%% Plots
 plt.close('all')
 
@@ -161,6 +165,7 @@ for dri in dr:
                      yerr=[Data.noise_avg_qc.sel(dr=dri,ppr=ppri)-Data.noise_low_qc.sel(dr=dri,ppr=ppri),
                            Data.noise_top_qc.sel(dr=dri,ppr=ppri)-Data.noise_avg_qc.sel(dr=dri,ppr=ppri)],linestyle='none',color=colors[i_ppr],capsize=5)
         plt.plot(snr_plot,Data.noise_mod.sel(dr=dri,ppr=ppri),'-',color=colors[i_ppr])
+        plt.plot(snr,Data.noise_th.sel(dr=dri,ppr=ppri),'--',color=colors[i_ppr])
         
         i_ppr+=1
         
@@ -191,6 +196,7 @@ for ppri in ppr:
                      yerr=[Data.noise_avg_qc.sel(dr=dri,ppr=ppri)-Data.noise_low_qc.sel(dr=dri,ppr=ppri),
                            Data.noise_top_qc.sel(dr=dri,ppr=ppri)-Data.noise_avg_qc.sel(dr=dri,ppr=ppri)],linestyle='none',color=colors[i_dr],capsize=5)
         plt.plot(snr_plot,Data.noise_mod.sel(dr=dri,ppr=ppri),'-',color=colors[i_dr])
+        plt.plot(snr,Data.noise_th.sel(dr=dri,ppr=ppri),'--',color=colors[i_dr])
 
         i_dr+=1
         

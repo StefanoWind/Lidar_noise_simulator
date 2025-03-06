@@ -14,19 +14,19 @@ import matplotlib
 
 matplotlib.rcParams['font.family'] = 'serif'
 matplotlib.rcParams['mathtext.fontset'] = 'cm'
-matplotlib.rcParams['font.size'] = 14
+matplotlib.rcParams['font.size'] = 12
 
 #%% Inputs
 SNRs=np.arange(0,-31,-2)#[dB] SNR grid
-Ns=[10,100,1000]# PPR
-Ms=[10,50,100]#FFT points
-N_sel=100#selected PPR
-M_sel=50#selected FFT points
+Ns=[1,10,100]# PPR
+Ms=[8,32,128]#FFT points
+N_sel=10#selected PPR
+M_sel=32#selected FFT points
 lambda0=1.548*10**-6#[m] laser wavelenght
 f_sample=100*10**6#[Hz] sampling frequency
 f2=5.5/(39*2)#spectral width
 method='ML'#method to estimate peak (ML or PG)
-L=10000#number of MC samples
+L=100000#number of MC samples
 
 #graphics
 colors={'low':'g','enh':'y','sat':'r'}
@@ -79,11 +79,11 @@ for N in Ns:
             regime='enh'
             
         hist = np.histogram(rws, bins=bins_rws)[0]
-        hist=hist/np.sum(hist)
-        ax.bar(utl.mid(bins_rws),hist, zs=SNR,width=3, zdir='y', alpha=0.75,color=colors[regime])
+        hist=hist/np.trapz(hist,f)
+        ax.bar(utl.mid(bins_rws),hist, zs=SNR,width=np.diff(bins_rws)[0], zdir='y', alpha=0.75,color=colors[regime])
         ax.view_init(40,-60)
         ax.set_box_aspect([1,2,2])
-        ax.set_zlim([0,1])
+        ax.set_zlim([0,60])
         ax.set_xlabel(r'$\hat{u}/u_{Nyquist}$')
         ax.set_xticks(np.arange(-1,1.1,0.5)*lambda0*f_sample/4)
         ax.set_yticks(np.arange(0,-31,-5))
@@ -159,11 +159,11 @@ for M in Ms:
             regime='enh'
             
         hist = np.histogram(rws, bins=bins_rws)[0]
-        hist=hist/np.sum(hist)
-        ax.bar(utl.mid(bins_rws),hist, zs=SNR,width=3, zdir='y', alpha=0.75,color=colors[regime])
+        hist=hist/np.trapz(hist,f)
+        ax.bar(utl.mid(bins_rws),hist, zs=SNR,width=np.diff(bins_rws)[0], zdir='y', alpha=0.75,color=colors[regime])
         ax.view_init(40,-60)
         ax.set_box_aspect([1,2,2])
-        ax.set_zlim([0,1])
+        ax.set_zlim([0,60])
         ax.set_xlabel(r'$\hat{u}/u_{Nyquist}$')
         ax.set_xticks(np.arange(-1,1.1,0.5)*lambda0*f_sample/4)
         ax.set_yticks(np.arange(0,-31,-5))
@@ -205,23 +205,30 @@ for M in Ms:
 plt.tight_layout()
 
 #std curve
+colors=['r','b','g']
 plt.figure(figsize=(16,8))
 plt.subplot(1,2,1)
 ctr=0
 for N in Ns:
-    plt.semilogy(SNRs,std_all_N[:,ctr],label=r'$N='+str(N)+'$')
+    plt.semilogy(SNRs,std_all_N[:,ctr],label=r'$N='+str(N)+'$',color=colors[ctr])
+    delta=10**(SNRs/10)
+    plt.plot(SNRs,(4*np.pi**0.5*f2**3/(N*M_sel*delta**2)*(1+0.16*delta/f2)**2)**0.5*f_sample/2*lambda0,'--',color=colors[ctr])
     ctr+=1
 plt.xlabel('SNR [dB]')
 plt.ylabel(r'$\sigma_T$ [m s$^{-1}$]')
 plt.title(r'$M='+str(M_sel)+'$')
 plt.grid()
+plt.legend()
 
 plt.subplot(1,2,2)
 ctr=0
-for N in Ms:
-    plt.semilogy(SNRs,std_all_M[:,ctr],label=r'$M='+str(M)+'$')
+for M in Ms:
+    plt.semilogy(SNRs,std_all_M[:,ctr],label=r'$M='+str(M)+'$',color=colors[ctr])
+    delta=10**(SNRs/10)
+    plt.plot(SNRs,(4*np.pi**0.5*f2**3/(N_sel*M*delta**2)*(1+0.16*delta/f2)**2)**0.5*f_sample/2*lambda0,'--',color=colors[ctr])
     ctr+=1
 plt.xlabel('SNR [dB]')
 plt.ylabel(r'$\sigma_T$ [m s$^{-1}$]')
 plt.title(r'$N='+str(N_sel)+'$')
 plt.grid()
+plt.legend()
