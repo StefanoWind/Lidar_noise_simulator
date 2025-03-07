@@ -19,7 +19,7 @@ warnings.filterwarnings("ignore")
 import matplotlib
 matplotlib.rcParams['font.family'] = 'serif'
 matplotlib.rcParams['mathtext.fontset'] = 'cm' 
-matplotlib.rcParams['font.size'] = 14
+matplotlib.rcParams['font.size'] = 18
 plt.close('all')
 
 global Nyquist
@@ -27,6 +27,9 @@ global slope_lin
 global snr_flat
 
 #%% Inputs
+
+#user
+plot_theory=False
 
 #dataset
 source='data/nwtc.lidar.z01.nearest/*xlsx'
@@ -165,7 +168,8 @@ for dri in dr:
                      yerr=[Data.noise_avg_qc.sel(dr=dri,ppr=ppri)-Data.noise_low_qc.sel(dr=dri,ppr=ppri),
                            Data.noise_top_qc.sel(dr=dri,ppr=ppri)-Data.noise_avg_qc.sel(dr=dri,ppr=ppri)],linestyle='none',color=colors[i_ppr],capsize=5)
         plt.plot(snr_plot,Data.noise_mod.sel(dr=dri,ppr=ppri),'-',color=colors[i_ppr])
-        plt.plot(snr,Data.noise_th.sel(dr=dri,ppr=ppri),'--',color=colors[i_ppr])
+        if plot_theory:
+            plt.plot(snr,Data.noise_th.sel(dr=dri,ppr=ppri),'--',color=colors[i_ppr])
         
         i_ppr+=1
         
@@ -196,7 +200,8 @@ for ppri in ppr:
                      yerr=[Data.noise_avg_qc.sel(dr=dri,ppr=ppri)-Data.noise_low_qc.sel(dr=dri,ppr=ppri),
                            Data.noise_top_qc.sel(dr=dri,ppr=ppri)-Data.noise_avg_qc.sel(dr=dri,ppr=ppri)],linestyle='none',color=colors[i_dr],capsize=5)
         plt.plot(snr_plot,Data.noise_mod.sel(dr=dri,ppr=ppri),'-',color=colors[i_dr])
-        plt.plot(snr,Data.noise_th.sel(dr=dri,ppr=ppri),'--',color=colors[i_dr])
+        if plot_theory:
+            plt.plot(snr,Data.noise_th.sel(dr=dri,ppr=ppri),'--',color=colors[i_dr])
 
         i_dr+=1
         

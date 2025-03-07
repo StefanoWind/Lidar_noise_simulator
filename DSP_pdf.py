@@ -14,7 +14,7 @@ import matplotlib
 
 matplotlib.rcParams['font.family'] = 'serif'
 matplotlib.rcParams['mathtext.fontset'] = 'cm'
-matplotlib.rcParams['font.size'] = 12
+matplotlib.rcParams['font.size'] = 10
 
 #%% Inputs
 SNRs=np.arange(0,-31,-2)#[dB] SNR grid

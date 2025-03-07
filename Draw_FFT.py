@@ -7,14 +7,14 @@ import os
 cd=os.path.dirname(__file__)
 import sys
 sys.path.append('C:/Users/SLETIZIA/OneDrive - NREL/Desktop/PostDoc/utils')
-import utils as utl
+# import utils as utl
 import numpy as np
 from matplotlib import pyplot as plt
 import matplotlib
 
 matplotlib.rcParams['font.family'] = 'serif'
 matplotlib.rcParams['mathtext.fontset'] = 'cm'
-matplotlib.rcParams['font.size'] = 14
+matplotlib.rcParams['font.size'] = 15
 
 #%% Inputs
 M=32
